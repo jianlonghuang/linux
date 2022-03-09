@@ -38,6 +38,7 @@
 #include <linux/interrupt.h>
 #include <linux/irq.h>
 #include <linux/irqdomain.h>
+#include <linux/math64.h>
 #include <linux/module.h>
 #include <linux/of.h>
 #include <linux/of_device.h>
@@ -121,7 +122,7 @@ void *dla_memcpy(void *dest, const void *src, uint64_t len)
 
 int64_t dla_get_time_us(void)
 {
-	return ktime_get_ns() / NSEC_PER_USEC;
+	return div_u64(ktime_get_ns(), NSEC_PER_USEC);
 }
 
 void dla_reg_write(void *driver_context, uint32_t addr, uint32_t reg)
