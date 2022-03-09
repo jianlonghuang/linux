@@ -587,9 +587,8 @@ static void pp_config(struct starfive_crtc *sf_crtc, int ppNum,
 irqreturn_t vpp1_isr_handler(int this_irq, void *dev_id)
 {
 	struct starfive_crtc *sf_crtc = dev_id;
-	u32 intr_status = 0;
 
-	intr_status = sf_fb_vppread32(sf_crtc, 1, PP_INT_STATUS);
+	sf_fb_vppread32(sf_crtc, 1, PP_INT_STATUS);
 	sf_fb_vppwrite32(sf_crtc, 1, PP_INT_CLR, 0xf);
 	sifive_l2_flush64_range(sf_crtc->dma_addr, sf_crtc->size);
 

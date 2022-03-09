@@ -201,13 +201,12 @@ static void starfive_crtc_atomic_flush(struct drm_crtc *crtc,
 				       struct drm_atomic_state *old_crtc_state)
 {
 	struct starfive_crtc *crtcp = to_starfive_crtc(crtc);
-	int ret;
 
 	//starfive_flush_dcache(crtcp->dma_addr, 1920*1080*2);
 	DRM_DEBUG_DRIVER("ddr_format_change [%d], dma_addr_change [%d]\n",
 			crtcp->ddr_format_change, crtcp->dma_addr_change);
 	if (crtcp->ddr_format_change || crtcp->dma_addr_change) {
-		ret = ddrfmt_to_ppfmt(crtcp);
+		ddrfmt_to_ppfmt(crtcp);
 		starfive_pp_update(crtcp);
 	} else {
 		DRM_DEBUG_DRIVER("%s with no change\n", __func__);
@@ -218,7 +217,6 @@ static void starfive_crtc_atomic_enable(struct drm_crtc *crtc,
 					struct drm_atomic_state *state)
 {
 	struct starfive_crtc *crtcp = to_starfive_crtc(crtc);
-	int ret;
 
 // enable crtc HW
 #ifdef CONFIG_DRM_STARFIVE_MIPI_DSI
@@ -227,7 +225,7 @@ static void starfive_crtc_atomic_enable(struct drm_crtc *crtc,
 #else
 	vout_reset(crtcp);
 #endif
-	ret = ddrfmt_to_ppfmt(crtcp);
+	ddrfmt_to_ppfmt(crtcp);
 	starfive_pp_enable(crtcp);
 	starfive_lcdc_enable(crtcp);
 	crtcp->is_enabled = true;  // should before
@@ -269,10 +267,10 @@ static const struct drm_crtc_helper_funcs starfive_crtc_helper_funcs = {
 	.mode_valid = starfive_crtc_mode_valid,
 };
 
-int starfive_crtc_create(struct drm_device *drm_dev,
-			 struct starfive_crtc *starfive_crtc,
-			 const struct drm_crtc_funcs *crtc_funcs,
-			 const struct drm_crtc_helper_funcs *crtc_helper_funcs)
+static int starfive_crtc_create(struct drm_device *drm_dev,
+			        struct starfive_crtc *starfive_crtc,
+			        const struct drm_crtc_funcs *crtc_funcs,
+			        const struct drm_crtc_helper_funcs *crtc_helper_funcs)
 {
 	struct drm_crtc *crtc = &starfive_crtc->crtc;
 	struct device *dev = drm_dev->dev;
@@ -296,7 +294,7 @@ int starfive_crtc_create(struct drm_device *drm_dev,
 	}
 
 	crtc->port = port;
-	return 0;
+	return ret;
 }
 
 static int starfive_crtc_get_memres(struct platform_device *pdev, struct starfive_crtc *sf_crtc)
