@@ -283,7 +283,7 @@ dla_program_operation(struct dla_processor *processor,
 	LOG_EVENT(group->roi_index, group->id, processor->op_type,
 						LOG_PROGRAM_END);
 
-	/**
+	/*
 	 * Pre-fetch consumers
 	 */
 	for (i = 0; i < DLA_OP_NUM; i++) {
@@ -327,7 +327,7 @@ dla_enable_operation(struct dla_processor *processor,
 	dla_debug("Enter: %s\n", __func__);
 	assert(op_desc->dependency_count == 0);
 
-	/**
+	/*
 	 * If some operation has reported error then skip
 	 * enabling next operations
 	 */
@@ -335,7 +335,7 @@ dla_enable_operation(struct dla_processor *processor,
 	if (engine->status)
 		goto exit;
 
-	/**
+	/*
 	 * Find out if operation is already programmed
 	 */
 	group_id = 0;
@@ -354,7 +354,7 @@ dla_enable_operation(struct dla_processor *processor,
 			!group->pending)
 		goto enable_op;
 
-	/**
+	/*
 	 * Operation is not programmed yet, ignore
 	 */
 	dla_debug("exit %s without actual enable due to processor "
@@ -362,7 +362,7 @@ dla_enable_operation(struct dla_processor *processor,
 	goto exit;
 
 enable_op:
-	/**
+	/*
 	 * If this event is triggered as part of programming same
 	 * group then skip enable, it will get enabled after programming
 	 * is complete
@@ -428,7 +428,7 @@ exit:
 	RETURN(err);
 }
 
-/**
+/*
  * Dequeue next operation of same type from list of operations
  */
 static int32_t
@@ -446,7 +446,7 @@ dla_dequeue_operation(struct dla_engine *engine,
 		goto exit;
 	}
 
-	/**
+	/*
 	 * If we are done processing all ROIs for current op then
 	 * load next op of same type otherwise reload same op for
 	 * next ROI.
@@ -454,7 +454,7 @@ dla_dequeue_operation(struct dla_engine *engine,
 	if (processor->roi_index == (engine->network->num_rois - 1)) {
 		index = processor->tail_op->consumers[processor->op_type].index;
 		if (-1 == index) {
-			/**
+			/*
 			 * It means we are done processing
 			 * all ops of this type
 			 */
@@ -471,7 +471,7 @@ dla_dequeue_operation(struct dla_engine *engine,
 	dla_debug("Dequeue op from %s processor, index=%d ROI=%d\n",
 			processor->name, index, processor->roi_index);
 
-	/**
+	/*
 	 * Get operation descriptor
 	 */
 	consumer = dla_get_op_desc(engine->task, index,
@@ -506,7 +506,7 @@ dla_update_dependency(struct dla_consumer *consumer,
 	if (event != consumer->event)
 		goto exit;
 
-	/**
+	/*
 	 * If consumer index is valid but op desc is NULL means
 	 * op desc for consumer was not pre-fetched
 	 */
@@ -575,7 +575,7 @@ exit:
 	RETURN(ret);
 }
 
-/**
+/*
  * Handle operation completion notification
  */
 int
@@ -602,7 +602,7 @@ dla_op_completion(struct dla_processor *processor,
 
 	task = engine->task;
 
-	/**
+	/*
 	 * Mark OP as done only when all ROIs are done for that
 	 * operation
 	 */
@@ -626,7 +626,7 @@ dla_op_completion(struct dla_processor *processor,
 				(sizeof(union dla_stat_container) *
 				(uint64_t)op_desc->index));
 
-		/**
+		/*
 		 * Flush stat descriptor to DRAM
 		 */
 		ret = dla_data_write(engine->driver_context, task->task_data,
@@ -639,7 +639,7 @@ dla_op_completion(struct dla_processor *processor,
 	}
 #endif /* STAT_ENABLE */
 
-	/**
+	/*
 	 * Get an extra reference count to keep op descriptor
 	 * in cache until this operation completes
 	 */
@@ -658,12 +658,12 @@ dla_op_completion(struct dla_processor *processor,
 	group->lut_index = -1;
 	processor->last_group = group->id;
 
-	/**
+	/*
 	 * Switch consumer pointer to next group
 	 */
 	processor->consumer_ptr = !group->id;
 
-	/**
+	/*
 	 * update dependency graph for this task
 	 * TODO: Add proper error handling
 	 */
@@ -686,7 +686,7 @@ dla_op_completion(struct dla_processor *processor,
 
 	next_group = &processor->groups[!group->id];
 	if (next_group->pending && !engine->status) {
-		/**
+		/*
 		 * Next group must be ready here for programming,
 		 * if not means it is an error
 		 */
@@ -719,7 +719,7 @@ exit:
 	RETURN(ret);
 }
 
-/**
+/*
  * Read network configuration from DRAM, network descriptor address
  * is always first in the address list. Network configuration contains
  * offset in address list for addresses of other lists used to
@@ -737,7 +737,7 @@ dla_read_network_config(struct dla_engine *engine)
 
 	dla_debug("Enter:%s\n", __func__);
 
-	/**
+	/*
 	 * Read address list from DRAM to DMEM
 	 */
 	ret = dla_read_address_list(engine);
@@ -746,7 +746,7 @@ dla_read_network_config(struct dla_engine *engine)
 		goto exit;
 	}
 
-	/**
+	/*
 	 * Read network descriptor address from address list. It is always
 	 * at index 0.
 	 */
@@ -758,7 +758,7 @@ dla_read_network_config(struct dla_engine *engine)
 		goto exit;
 	}
 
-	/**
+	/*
 	 * Read network descriptor, it has information for a network
 	 * such as all address indexes.
 	 */
@@ -776,7 +776,7 @@ dla_read_network_config(struct dla_engine *engine)
 	if (network.num_operations == 0)
 		goto exit;
 
-	/**
+	/*
 	 * Read operation descriptor list address from address list
 	 */
 	ret = dla_get_dma_address(engine->driver_context, task->task_data,
@@ -788,7 +788,7 @@ dla_read_network_config(struct dla_engine *engine)
 		goto exit;
 	}
 
-	/**
+	/*
 	 * Read surface descriptor list address from address list
 	 */
 	ret = dla_get_dma_address(engine->driver_context, task->task_data,
@@ -800,7 +800,7 @@ dla_read_network_config(struct dla_engine *engine)
 		goto exit;
 	}
 
-	/**
+	/*
 	 * Read dependency graph address from address list
 	 */
 	ret = dla_get_dma_address(engine->driver_context, task->task_data,
@@ -812,7 +812,7 @@ dla_read_network_config(struct dla_engine *engine)
 		goto exit;
 	}
 
-	/**
+	/*
 	 * Read LUT data list address from address list
 	 */
 	if (network.num_luts) {
@@ -827,11 +827,11 @@ dla_read_network_config(struct dla_engine *engine)
 		}
 	}
 
-	/**
+	/*
 	 * Read address for ROI information
 	 */
 	if (network.dynamic_roi) {
-		/**
+		/*
 		 * Read ROI array address from address list
 		 */
 		ret = dla_get_dma_address(engine->driver_context,
@@ -854,7 +854,7 @@ dla_read_network_config(struct dla_engine *engine)
 			goto exit;
 		}
 
-		/**
+		/*
 		 * Number of ROIs detected can't be greater than maximum number
 		 * ROIs this network can process
 		 */
@@ -866,7 +866,7 @@ dla_read_network_config(struct dla_engine *engine)
 
 		network.num_rois = roi_array_length;
 
-		/**
+		/*
 		 * Read surface address from address list
 		 */
 		ret = dla_get_dma_address(engine->driver_context,
@@ -939,7 +939,7 @@ dla_initiate_processors(struct dla_engine *engine)
 		/*
 		 * if consumer is NULL, it means either data copy error
 		 * or cache insufficient - we should fix it
-		 **/
+		 */
 		if (consumer == NULL) {
 			dla_error("Failed to allocate memory for op_head[%d]=%d",
 							i, index);
@@ -1006,7 +1006,7 @@ dla_handle_events(struct dla_processor *processor)
 				goto exit;
 		}
 
-		/**
+		/*
 		 * Handle complete after all other events
 		 */
 		if ((1 << DLA_EVENT_OP_COMPLETED) & group->events) {
@@ -1018,7 +1018,7 @@ dla_handle_events(struct dla_processor *processor)
 				goto exit;
 		}
 
-		/**
+		/*
 		 * Clear all events
 		 */
 		group->events = 0;
@@ -1041,7 +1041,7 @@ dla_process_events(void *engine_context, uint32_t *task_complete)
 
 		processor = &engine->processors[i];
 		ret = dla_handle_events(processor);
-		/**
+		/*
 		 * Incase engine status is non-zero, then don't
 		 * update the engine status. We should keep its
 		 * status for later cleaning of engine.
@@ -1056,7 +1056,7 @@ dla_process_events(void *engine_context, uint32_t *task_complete)
 	RETURN(ret);
 }
 
-/**
+/*
  * Execute task selected by task scheduler
  *
  * 1. Read network configuration for the task
@@ -1102,7 +1102,7 @@ dla_execute_task(void *engine_context, void *task_data, void *config_data)
 
 	dla_debug_address_info(engine->task);
 
-	/**
+	/*
 	 * If no operations in a task means nothing to do, NULL task
 	 */
 	if (engine->network->num_operations == 0)

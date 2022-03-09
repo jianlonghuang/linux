@@ -262,7 +262,7 @@ processor_sdp_program(struct dla_processor_group *group)
 	uint64_t  y_addr = -1, dst_addr = -1;
 	uint32_t reg, high, low;
 	uint8_t fly;
-	uint32_t atom_size;
+	uint32_t __maybe_unused atom_size;
 	struct dla_sdp_op *x1_op;
 	struct dla_sdp_op *x2_op;
 	struct dla_sdp_op *y_op;

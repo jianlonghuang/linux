@@ -75,7 +75,7 @@ dla_bdma_dump_stat(struct dla_processor *processor)
 void
 dla_bdma_set_producer(int32_t group_id, int32_t rdma_group_id)
 {
-	/**
+	/*
 	 * There is no producer bit for BDMA operation,
 	 * interrupt pointer decides which outstanding request
 	 * to use for this BDMA operation
@@ -100,7 +100,7 @@ dla_bdma_enable(struct dla_processor_group *group)
 		group->start_time = dla_get_time_us();
 	}
 
-	/**
+	/*
 	 * Launch BDMA transfer
 	 */
 	if (group->id == 0)
@@ -121,7 +121,7 @@ dla_bdma_rdma_check(struct dla_processor_group *group)
 	group->is_rdma_needed = 0;
 }
 
-/**
+/*
  * Program BDMA slot for transfer
  */
 static int32_t
@@ -210,7 +210,7 @@ dla_bdma_is_ready(struct dla_processor *processor,
 
 	next_group = &processor->groups[!group->id];
 
-	/**
+	/*
 	 * If another group is already programmed but not active then
 	 * do not program this operation as BDMA does not really
 	 * have shadow copies for groups. It will end programming

@@ -35,7 +35,7 @@
 
 int32_t dla_isr_handler(void *engine_data)
 {
-	uint32_t mask;
+	uint32_t __maybe_unused mask;
 	uint32_t reg;
 	struct dla_processor *processor = NULL;
 	struct dla_processor_group *group;

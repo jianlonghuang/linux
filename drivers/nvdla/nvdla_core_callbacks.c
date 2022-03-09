@@ -77,7 +77,7 @@ static struct nvdla_config nvdla_config_large = {
 	.weight_compress_support = false,
 };
 
-void dla_debug(const char *str, ...)
+void __printf(1, 2) dla_debug(const char *str, ...)
 {
 	va_list args;
 	va_start(args, str);
@@ -85,7 +85,7 @@ void dla_debug(const char *str, ...)
 	va_end(args);
 }
 
-void dla_info(const char *str, ...)
+void __printf(1, 2) dla_info(const char *str, ...)
 {
 	va_list args;
 	va_start(args, str);
@@ -93,7 +93,7 @@ void dla_info(const char *str, ...)
 	va_end(args);
 }
 
-void dla_warn(const char *str, ...)
+void __printf(1, 2) dla_warn(const char *str, ...)
 {
 	va_list args;
 	va_start(args, str);
@@ -101,7 +101,7 @@ void dla_warn(const char *str, ...)
 	va_end(args);
 }
 
-void dla_error(const char *str, ...)
+void __printf(1, 2) dla_error(const char *str, ...)
 {
 	va_list args;
 	va_start(args, str);

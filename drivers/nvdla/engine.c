@@ -43,6 +43,7 @@ static const uint32_t map_rdma_ptr_addr[] = {
 	0xFFFFFFFF,
 };
 
+/*
 static const uint32_t map_sts_addr[] = {
 	BDMA_REG(STATUS),
 	CACC_REG(S_STATUS),
@@ -51,6 +52,7 @@ static const uint32_t map_sts_addr[] = {
 	CDP_REG(S_STATUS),
 	RBK_REG(S_STATUS),
 };
+*/
 
 static const uint32_t map_ptr_addr[] = {
 	BDMA_REG(STATUS),
@@ -88,7 +90,7 @@ uint8_t bdma_grp_sts[2] = {
 
 struct dla_roi_desc roi_desc;
 
-/**
+/*
  * Get DMA data cube address
  */
 int32_t
@@ -109,7 +111,7 @@ exit:
 	return ret;
 }
 
-/**
+/*
  * Read input buffer address
  *
  * For input layer, in case of static ROI this address is read
@@ -131,7 +133,7 @@ dla_read_input_address(struct dla_data_cube *data,
 	int32_t ret = ERR(INVALID_INPUT);
 	struct dla_engine *en = dla_get_engine();
 
-	/**
+	/*
 	 * If memory type is HW then no address required
 	 */
 	if (data->type == DLA_MEM_HW) {
@@ -139,13 +141,13 @@ dla_read_input_address(struct dla_data_cube *data,
 		goto exit;
 	}
 
-	/**
+	/*
 	 * If address list index is not -1 means this address has to
 	 * be read from address list
 	 */
 	if (data->address != -1) {
 
-		/**
+		/*
 		 * But if other parameters indicate that this is input layer
 		 * for dynamic ROI then it is an error
 		 */
@@ -161,7 +163,7 @@ dla_read_input_address(struct dla_data_cube *data,
 		goto exit;
 	}
 
-	/**
+	/*
 	 * Check if it is dynamic ROI and this is input layer
 	 */
 	if (en->network->dynamic_roi && en->network->input_layer == op_index) {
@@ -215,7 +217,7 @@ utils_get_free_group(struct dla_processor *processor,
 		hw_consumer_ptr = (pointer & MASK(CDP_S_POINTER_0, CONSUMER)) >>
 				SHIFT(CDP_S_POINTER_0, CONSUMER);
 
-		/**
+		/*
 		 * Read current consumer pointer for RDMA only if processor
 		 * has RDMA module
 		 */
@@ -228,7 +230,7 @@ utils_get_free_group(struct dla_processor *processor,
 		}
 	}
 
-	/**
+	/*
 	 * If both processors are programmed then exit
 	 */
 	if (processor->group_status == 0x3) {
@@ -237,19 +239,19 @@ utils_get_free_group(struct dla_processor *processor,
 	}
 
 	if (!processor->group_status)
-		/**
+		/*
 		 * If both groups are idle then use consumer pointer
 		 */
 		*group_id = hw_consumer_ptr;
 	else
-		/**
+		/*
 		 * Here it is assumed that only one group is idle or busy
 		 * and hence right shift will work to get correct
 		 * group id
 		 */
 		*group_id = !(processor->group_status >> 1);
 
-	/**
+	/*
 	 * If both groups are idle then read group id from pointer
 	 */
 	if (!processor->rdma_status)
